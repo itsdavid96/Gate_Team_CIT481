@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import Chart from "../node_modules/chart.js/dist/chart.js";
 import unirest from 'unirest';
 
 class App extends React.Component {
@@ -31,23 +32,51 @@ class App extends React.Component {
     // end function - set state
     req.end(function (res) {
       if (res.error) throw new Error(res.error);
-      
-      console.log(res.body.data.coins[0]);
-      tempArray.push(res.body.data.coins[0].name);
-      document.getElementById("crypto1").innerHTML = res.body.data.coins[0].name;
-      document.getElementById("cp1").innerHTML = "$" + parseFloat(res.body.data.coins[0].price).toFixed(2);
-      tempArray.push(res.body.data.coins[1].name);    
-      document.getElementById("crypto2").innerHTML = res.body.data.coins[1].name;
-      document.getElementById("cp2").innerHTML = "$" + parseFloat(res.body.data.coins[1].price).toFixed(2);
-      tempArray.push(res.body.data.coins[2].name);  
-      document.getElementById("crypto3").innerHTML = res.body.data.coins[2].name; 
-      document.getElementById("cp3").innerHTML = "$" + parseFloat(res.body.data.coins[2].price).toFixed(2);
-      tempArray.push(res.body.data.coins[3].name);    
-      document.getElementById("crypto4").innerHTML = res.body.data.coins[3].name;
-      document.getElementById("cp4").innerHTML = "$" + parseFloat(res.body.data.coins[3].price).toFixed(2);
-      tempArray.push(res.body.data.coins[4].name);
-      document.getElementById("crypto5").innerHTML = res.body.data.coins[4].name;   
-      document.getElementById("cp5").innerHTML = "$" + parseFloat(res.body.data.coins[4].price).toFixed(2);
+      const decimals = 3;
+      var chart1 = new Chart(document.getElementById("chartCrypto"), {
+        type: 'bar',
+        data: {
+          labels: [res.body.data.coins[0].name, res.body.data.coins[1].name, res.body.data.coins[2].name, res.body.data.coins[3].name, res.body.data.coins[4].name],
+          datasets: [
+            {
+              label: 'Top Crypto Coins!',
+              data: [parseFloat(res.body.data.coins[0].price).toFixed(2),
+              parseFloat(res.body.data.coins[1].price).toFixed(2),
+              parseFloat(res.body.data.coins[2].price).toFixed(2),
+              parseFloat(res.body.data.coins[3].price).toFixed(2),
+              parseFloat(res.body.data.coins[4].price).toFixed(2)
+              ],
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 205, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(54, 162, 235, 0.2)'
+              ],
+              borderColor: [
+                'rgb(255, 99, 132)',
+                'rgb(255, 159, 64)',
+                'rgb(255, 205, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(54, 162, 235)'
+              ],
+              borderWidth: 1
+            }
+          ],
+        },
+        options: {
+          scales: {
+            yAxes: [{
+                ticks: {
+                    // Include a dollar sign in the ticks
+                    callback: function(value, index, values) {
+                        return '$' + value.toFixed(decimals);
+                    }
+                }
+            }]
+        }
+        }
+      });
     });
 
     console.log("This is tempArray");
@@ -79,35 +108,9 @@ class App extends React.Component {
         </div>
         <div className="row" id="data">
           <div className="cryptoDiv">
-            <table className="cryptoTable">
-              <tr>
-                <th className="tableTitle" colSpan="2">Crypto Currencies</th>
-              </tr>
-              <tr>
-                <th>Coin Name</th>
-                <th>Coin Price</th>
-              </tr>
-              <tr className="rowsTable1">
-                <td id="crypto1">Tbd</td>
-                <td id="cp1">Tbd</td>
-              </tr>
-              <tr className="rowsTable1">
-                <td id="crypto2">Tbd</td>
-                <td id="cp2">Tbd</td>
-              </tr>
-              <tr className="rowsTable1">
-                <td id="crypto3">Tbd</td>
-                <td id="cp3">Tbd</td>
-              </tr>
-              <tr className="rowsTable1">
-                <td id="crypto4">Tbd</td>
-                <td id="cp4">Tbd</td>
-              </tr>
-              <tr className="rowsTable1">
-                <td id="crypto5">Tbd</td>
-                <td id="cp5">Tbd</td>
-              </tr>
-            </table>
+            <canvas 
+              id="chartCrypto"
+            />
           </div>
           <div className="stocksDiv">
             <table className="stocksTable">
@@ -140,6 +143,11 @@ class App extends React.Component {
               </tr>
             </table>
           </div>
+          {/* <div>
+            <canvas 
+              id="chartCrypto"
+            />
+          </div> */}
         </div>
       </div>
     );
